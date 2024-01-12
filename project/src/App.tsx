@@ -1,11 +1,35 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { MutableRefObject, useEffect, useRef } from "react";
+import { useGeographic } from "ol/proj";
+import { OSM } from "ol/source";
+import { Map, View } from "ol";
+import TileLayer from "ol/layer/Tile";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
 
-  return <div className= {"map"}>I am a map</div>;
+  useEffect(() => {
+    useGeographic();
+
+    const map = new Map({
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+      ],
+      view: new View({
+        center: [10, 59],
+        zoom: 8,
+      }),
+    });
+
+    map.setTarget(mapRef.current);
+  }, []);
+
+  return (
+    <div className={"map"} ref={mapRef} style={{ height: "100vh", width: "100vw" }}>
+      I am a map
+    </div>
+  );
 }
+
 export default App;
